@@ -33,6 +33,28 @@ jobs:
       - name: Extract Android project
         run: unzip -q android.zip -d .
 
+      - name: Apply Material3 experimental API opt-ins
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          files = [
+              Path('android/app/src/main/java/com/ultragram/android/ui/screens/chats/ChatListScreen.kt'),
+              Path('android/app/src/main/java/com/ultragram/android/ui/screens/chats/ChatScreen.kt'),
+              Path('android/app/src/main/java/com/ultragram/android/ui/screens/gifts/GiftsScreen.kt'),
+              Path('android/app/src/main/java/com/ultragram/android/ui/screens/profile/ProfileScreen.kt'),
+              Path('android/app/src/main/java/com/ultragram/android/ui/screens/settings/SettingsScreen.kt'),
+              Path('android/app/src/main/java/com/ultragram/android/ui/screens/wallet/WalletScreen.kt'),
+          ]
+          annotation = '@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)'
+          for path in files:
+              if not path.is_file():
+                  raise SystemExit(f'Missing expected Kotlin source: {path}')
+              source = path.read_text(encoding='utf-8')
+              if annotation not in source:
+                  path.write_text(annotation + '\\n' + source, encoding='utf-8')
+              print(f'Opt-in verified: {path}')
+          PY
+
       - name: Build debug APK
         run: gradle --no-daemon -p android assembleDebug
 
