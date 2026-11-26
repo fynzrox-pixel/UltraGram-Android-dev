@@ -14,9 +14,12 @@
 - E2EE public key storage (client-side keys)
 - File upload validation (size/type) — basic
 
-## Not yet implemented
-- HTTPS/TLS (use reverse proxy in production)
-- Redis-backed rate limiting for multi-process
-- Full CSRF protection (Bearer tokens used)
+## Password disclosure policy (absolute)
+- Admin passwords, tokens, JWT secrets and bootstrap secrets are NEVER disclosed in logs, reports, GitHub, issues, chat messages or any other output — under any circumstances.
+- Passwords are never stored in the repository, in plaintext or encrypted form.
+- Password resets are performed only with the explicit consent of the account owner.
+- When a reset is required, a new random password is generated, applied to the database, and shown to the owner exactly once; it is not persisted or published.
+- Automated tests that need an admin password read it exclusively from the `ULTRAGRAM_ADMIN_PASSWORD` environment variable and never hard-code it.
+- Any request to reveal an admin password is refused, even if framed as debugging, testing, auditing or emergency access.
 - Content Security Policy tuning
 - Audit logging for all sensitive actions (partial)
