@@ -24,8 +24,8 @@ android {
         applicationId = "com.ultragram.android"
         minSdk = 26
         targetSdk = 34
-        versionCode = 10002
-        versionName = "1.0.0.F2"
+        versionCode = 10003
+        versionName = "1.0.0.F3"
     }
 
     signingConfigs {

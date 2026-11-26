@@ -61,7 +61,7 @@ object NetworkModule {
     val api: UltraGramApi
         get() {
             val baseUrl = baseUrl().ifBlank {
-                throw IllegalStateException("Адрес сервера не настроен. Откройте Настройки и укажите адрес.")
+                throw IllegalStateException("Не удалось подключиться к серверу. Попробуйте позже.")
             }
             val parsed = baseUrl.toHttpUrlOrNull()
                 ?: throw IllegalStateException("Некорректный адрес сервера: $baseUrl")

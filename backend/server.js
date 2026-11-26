@@ -989,7 +989,7 @@ addRoute('POST', '/api/profile/attach-phone', async (req,res) => {
 
 // ---- Health ----
 addRoute('GET', '/api/health', async (req,res) => {
-  sendJson(res,200,{ ok: true, name: 'UltraGram Backend', version: '1.0.0.F2', time: Date.now() });
+  sendJson(res,200,{ ok: true, name: 'UltraGram Backend', version: '1.0.0.F3', time: Date.now() });
 });
 
 // ---- WS upgrade ----
