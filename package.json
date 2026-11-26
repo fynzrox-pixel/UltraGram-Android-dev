@@ -1,0 +1,56 @@
+{
+  "name": "ultragram",
+  "version": "1.0.0",
+  "description": "UltraGram — independent communication platform and digital ecosystem",
+  "main": "desktop/main.js",
+  "author": "UltraGram Team",
+  "license": "MIT",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "build:desktop": "electron-builder --win",
+    "test": "node tests/run.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "sql.js": "^1.11.0",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.ultragram.app",
+    "productName": "UltraGram",
+    "directories": {
+      "output": "dist"
+    },
+    "artifactName": "UltraGram Setup.${ext}",
+    "asar": false,
+    "files": [
+      "backend/**/*",
+      "public/**/*",
+      "desktop/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ],
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "UltraGram"
+    }
+  }
+}

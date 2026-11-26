@@ -1,0 +1,42 @@
+# Build outputs
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/keystore.properties
+android/*.jks
+android/*.keystore
+*.apk
+!UltraGram-1.0.0.F2.apk
+
+# Node
+node_modules/
+npm-debug.log*
+*.log
+
+# Runtime data
+uploads/*
+!uploads/.gitkeep
+database/*.db
+database/*.db-journal
+database/*.db-wal
+database/*.db-shm
+database/test-*.db
+backups/
+dist/
+artifact-extracted/
+test-extract/
+
+# Secrets
+.secrets/
+*.pem
+*.key
+.env
+.env.*
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

@@ -1,22 +1,19 @@
-name: Build UltraGram Android APK
+name: Build & Release UltraGram Android APK
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'android.zip'
-      - '.github/workflows/android-build.yml'
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
-    name: Build debug APK
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -25,43 +22,49 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle 8.7
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.9'
 
-      - name: Extract Android project
-        run: unzip -q android.zip -d .
-
-      - name: Apply Material3 experimental API opt-ins
+      - name: Decode release keystore (optional)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          files = [
-              Path('android/app/src/main/java/com/ultragram/android/ui/screens/chats/ChatListScreen.kt'),
-              Path('android/app/src/main/java/com/ultragram/android/ui/screens/chats/ChatScreen.kt'),
-              Path('android/app/src/main/java/com/ultragram/android/ui/screens/gifts/GiftsScreen.kt'),
-              Path('android/app/src/main/java/com/ultragram/android/ui/screens/profile/ProfileScreen.kt'),
-              Path('android/app/src/main/java/com/ultragram/android/ui/screens/settings/SettingsScreen.kt'),
-              Path('android/app/src/main/java/com/ultragram/android/ui/screens/wallet/WalletScreen.kt'),
-          ]
-          annotation = '@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)'
-          for path in files:
-              if not path.is_file():
-                  raise SystemExit(f'Missing expected Kotlin source: {path}')
-              source = path.read_text(encoding='utf-8')
-              if annotation not in source:
-                  path.write_text(annotation + chr(10) + source, encoding='utf-8')
-              print(f'Opt-in verified: {path}')
-          PY
+          echo "$KEYSTORE_BASE64" | base64 -d > android/ultragram-release.jks
+          {
+            echo "storeFile=ultragram-release.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/keystore.properties
 
-      - name: Build debug APK
-        run: gradle --no-daemon -p android assembleDebug
+      - name: Build release APK
+        working-directory: android
+        run: |
+          gradle assembleRelease --no-daemon -Pultragram.baseUrl="${{ vars.ULTRAGRAM_BASE_URL }}"
+          mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/UltraGram-1.0.0.F2.apk
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: UltraGram-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: UltraGram-1.0.0.F2
+          path: android/app/build/outputs/UltraGram-1.0.0.F2.apk
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: UltraGram Android 1.0.0.F2
+          tag_name: ${{ github.ref_name }}
+          files: android/app/build/outputs/UltraGram-1.0.0.F2.apk
+          generate_release_notes: true

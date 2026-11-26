@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.UltraGram" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/ug_primary</item>
+        <item name="android:windowBackground">@color/ug_bg</item>
+    </style>
+</resources>
