@@ -119,7 +119,7 @@ fun Throwable.friendlyMessage(): String = when (this) {
         }
     }
     is UnknownHostException -> "Сервер не найден. Проверьте адрес в Настройках."
-    is ConnectException -> "Не удалось подключиться к серверу. Проверьте адрес и что backend запущен."
+    is ConnectException -> "Не удалось подключиться к серверу. Попробуйте позже."
     is SocketTimeoutException -> "Сервер не отвечает. Проверьте сеть и адрес сервера."
     is IOException -> "Ошибка сети: ${message ?: "проверьте подключение"}"
     is IllegalStateException, is IllegalArgumentException -> message ?: "Ошибка конфигурации"

@@ -15,37 +15,13 @@ import androidx.compose.ui.unit.dp
 import com.ultragram.android.BuildConfig
 import com.ultragram.android.data.AppSettings
 import com.ultragram.android.data.WebSocketManager
-import com.ultragram.android.data.network.NetworkModule
-import com.ultragram.android.data.network.friendlyMessage
-import com.ultragram.android.ui.theme.UgDanger
 import com.ultragram.android.ui.theme.UgMuted
 import com.ultragram.android.ui.theme.UgSuccess
-import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: androidx.navigation.NavController) {
-    var serverUrl by remember { mutableStateOf(AppSettings.serverUrl()) }
-    var status by remember { mutableStateOf<String?>(null) }
-    var statusOk by remember { mutableStateOf(false) }
-    var checking by remember { mutableStateOf(false) }
-    var savedMessage by remember { mutableStateOf<String?>(null) }
-    val scope = rememberCoroutineScope()
-
-    fun save(): Boolean {
-        val problem = AppSettings.validateServerUrl(serverUrl)
-        if (problem != null) {
-            status = problem
-            statusOk = false
-            return false
-        }
-        AppSettings.setServerUrl(serverUrl)
-        serverUrl = AppSettings.serverUrl()
-        NetworkModule.invalidate()
-        savedMessage = "Адрес сохранён: $serverUrl"
-        return true
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -76,81 +52,6 @@ fun SettingsScreen(navController: androidx.navigation.NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            Text("Подключение", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            Text(
-                "Эмулятор Android обращается к компьютеру по адресу 10.0.2.2. " +
-                    "Реальный телефон должен использовать IP компьютера в локальной сети " +
-                    "(debug) или HTTPS-адрес production-сервера (release).",
-                color = UgMuted
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = serverUrl,
-                onValueChange = { serverUrl = it },
-                label = { Text("Адрес backend") },
-                singleLine = true,
-                supportingText = {
-                    Text(
-                        "Примеры: http://10.0.2.2:8787/ (эмулятор), " +
-                            "http://192.168.x.x:8787/ (телефон в LAN, debug), " +
-                            "https://ваш-домен/ (production)"
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
-                    onClick = { save() },
-                    modifier = Modifier.weight(1f)
-                ) { Text("Сохранить") }
-                OutlinedButton(
-                    onClick = {
-                        serverUrl = AppSettings.defaultServerUrl()
-                        savedMessage = null
-                    },
-                    modifier = Modifier.weight(1f)
-                ) { Text("По умолчанию") }
-            }
-            Spacer(Modifier.height(8.dp))
-            Button(
-                enabled = !checking,
-                onClick = {
-                    if (!save()) return@Button
-                    checking = true
-                    status = null
-                    scope.launch {
-                        try {
-                            val health = NetworkModule.api.health()
-                            statusOk = true
-                            status = "Подключено: ${health["name"] ?: "UltraGram"} " +
-                                "${health["version"] ?: ""}"
-                        } catch (e: Exception) {
-                            statusOk = false
-                            status = e.friendlyMessage()
-                        } finally {
-                            checking = false
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(if (checking) "Проверка…" else "Проверить подключение")
-            }
-            status?.let {
-                Spacer(Modifier.height(8.dp))
-                Text(it, color = if (statusOk) UgSuccess else UgDanger)
-            }
-            savedMessage?.let {
-                Spacer(Modifier.height(8.dp))
-                Text(it, color = UgMuted)
-            }
-
-            Spacer(Modifier.height(24.dp))
-            HorizontalDivider()
-            Spacer(Modifier.height(16.dp))
-
             Text("Аккаунт", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
             Text(

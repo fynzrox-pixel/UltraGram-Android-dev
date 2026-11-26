@@ -18,7 +18,7 @@ import com.ultragram.android.data.network.friendlyMessage
 import com.ultragram.android.ui.theme.UgDanger
 import com.ultragram.android.ui.theme.UgMuted
 import com.ultragram.android.ui.theme.UgPrimary
-import com.ultragram.android.ui.theme.UgSuccess
+
 import kotlinx.coroutines.launch
 
 @Composable
@@ -30,24 +30,7 @@ fun AuthScreen(navController: androidx.navigation.NavController) {
     var isRegister by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
-    var serverUrl by remember { mutableStateOf(AppSettings.serverUrl()) }
-    var showServer by remember { mutableStateOf(AppSettings.serverUrl().isBlank()) }
-    var checking by remember { mutableStateOf(false) }
-    var serverStatus by remember { mutableStateOf<String?>(null) }
-    var serverOk by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-
-    fun applyServer(): Boolean {
-        val problem = AppSettings.validateServerUrl(serverUrl)
-        if (problem != null) {
-            error = problem
-            return false
-        }
-        AppSettings.setServerUrl(serverUrl)
-        serverUrl = AppSettings.serverUrl()
-        return true
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -119,8 +102,6 @@ fun AuthScreen(navController: androidx.navigation.NavController) {
             Button(
                 onClick = {
                     error = null
-                    serverStatus = null
-                    if (!applyServer()) return@Button
                     if (identifier.isBlank() || password.isBlank()) {
                         error = "Заполните логин и пароль"
                         return@Button
@@ -185,73 +166,6 @@ fun AuthScreen(navController: androidx.navigation.NavController) {
             Text(if (isRegister) "Уже есть аккаунт? Войти" else "Нет аккаунта? Регистрация")
         }
 
-        TextButton(onClick = { showServer = !showServer }) {
-            Text(if (showServer) "Скрыть настройки сервера" else "Настройки сервера")
-        }
-
-        if (showServer) {
-            OutlinedTextField(
-                value = serverUrl,
-                onValueChange = { serverUrl = it },
-                label = { Text("Адрес backend") },
-                singleLine = true,
-                supportingText = {
-                    Text(
-                        "Эмулятор: http://10.0.2.2:8787/\n" +
-                            "Телефон: http://<LAN-IP>:8787/ (debug) или https://… (release)",
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Button(
-                    onClick = {
-                        error = null
-                        serverStatus = null
-                        if (!applyServer()) return@Button
-                        checking = true
-                        scope.launch {
-                            try {
-                                val health = NetworkModule.api.health()
-                                serverOk = true
-                                serverStatus = "Подключено: ${health["name"] ?: "UltraGram"} ${health["version"] ?: ""}"
-                            } catch (e: Exception) {
-                                serverOk = false
-                                serverStatus = e.friendlyMessage()
-                            } finally {
-                                checking = false
-                            }
-                        }
-                    },
-                    enabled = !checking,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(if (checking) "Проверка…" else "Проверить")
-                }
-                OutlinedButton(
-                    onClick = {
-                        serverUrl = AppSettings.defaultServerUrl()
-                        serverStatus = null
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("По умолчанию")
-                }
-            }
-            serverStatus?.let {
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    it,
-                    color = if (serverOk) UgSuccess else UgDanger,
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-        }
 
         error?.let {
             Spacer(Modifier.height(12.dp))
