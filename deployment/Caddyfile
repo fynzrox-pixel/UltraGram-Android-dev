@@ -1,0 +1,16 @@
+# UltraGram production reverse proxy (Caddy).
+# Caddy obtains and renews Let's Encrypt certificates automatically.
+# Replace api.example.com with your real domain.
+
+api.example.com {
+    encode gzip
+
+    # WebSocket (WSS -> WS)
+    @ws {
+        path /ws
+    }
+    reverse_proxy @ws 127.0.0.1:8787
+
+    # Everything else
+    reverse_proxy 127.0.0.1:8787
+}
