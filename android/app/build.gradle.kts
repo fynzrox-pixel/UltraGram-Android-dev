@@ -7,6 +7,17 @@ plugins {
 }
 
 val configuredBaseUrl = (project.findProperty("ultragram.baseUrl") as String?)?.trim().orEmpty()
+
+// Production (release) builds MUST provide a real HTTPS backend URL.
+// Failing here prevents shipping an APK with an empty/unusable server address.
+val isReleaseRequested = gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
+if (isReleaseRequested && configuredBaseUrl.isBlank()) {
+    throw GradleException(
+        "Release build requires a production HTTPS backend URL. " +
+            "Pass -Pultragram.baseUrl=https://api.your-domain/ (or set ULTRAGRAM_BASE_URL in CI). " +
+            "Debug builds are unaffected."
+    )
+}
 fun quoted(value: String): String =
     "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
@@ -24,8 +35,8 @@ android {
         applicationId = "com.ultragram.android"
         minSdk = 26
         targetSdk = 34
-        versionCode = 10003
-        versionName = "1.0.0.F3"
+        versionCode = 10004
+        versionName = "1.0.0.F4"
     }
 
     signingConfigs {

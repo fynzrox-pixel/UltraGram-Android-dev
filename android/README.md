@@ -4,10 +4,10 @@
 
 ## Версия
 
-- Version Name: `1.0.0.F3`
-- Version Code: `10003`
+- Version Name: `1.0.0.F4`
+- Version Code: `10004`
 - Package: `com.ultragram.android`
-- APK: `UltraGram-1.0.0.F3.apk`
+- APK: `UltraGram-1.0.0.F4.apk`
 
 ## Требования
 
@@ -25,7 +25,7 @@ gradle assembleDebug
 gradle assembleRelease -Pultragram.baseUrl=https://your-domain/
 ```
 
-Готовый файл: `app/build/outputs/UltraGram-1.0.0.F3.apk`.
+Готовый файл: `app/build/outputs/UltraGram-1.0.0.F4.apk`.
 
 Release-сборка использует `android/keystore.properties` + `ultragram-release.jks`, если они есть.
 Без них APK подписывается debug-ключом и остаётся устанавливаемым для тестирования.
