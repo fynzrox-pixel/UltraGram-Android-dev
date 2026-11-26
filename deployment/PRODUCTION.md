@@ -71,5 +71,36 @@ Use `deployment/nginx-ultragram.conf` or `deployment/Caddyfile` as a reverse pro
 - `wss://api.<DOMAIN>/ws?token=...` connects.
 - Android Release APK and Windows client log in and sync messages.
 
+## Free Deployment (0 UAH)
+See `deployment/setup-vps.sh` and `deployment/duckdns-update.sh`.
+
+### Free resources
+- **VPS:** Oracle Cloud Always Free (Ubuntu 24.04, ARM64, 2 OCPU / 12 GB RAM). Alternative: any free VPS provider.
+- **Domain:** DuckDNS (free subdomain, e.g. `ultragram-api.duckdns.org`).
+- **HTTPS:** Let's Encrypt (free, auto-renew via certbot).
+- **Reverse proxy:** Nginx (free) or Caddy (free, auto-HTTPS).
+
+### Important warnings
+- Oracle Cloud requires a credit/debit card for account verification (even for free tier). If you do not want to provide a card, use an alternative free VPS.
+- DuckDNS is free but requires a free account (GitHub/Google login).
+- Let's Encrypt certificates are free and auto-renew.
+- No paid resources are used anywhere.
+
+### Steps
+1. Register on DuckDNS, create subdomain `ultragram-api`, get token.
+2. Create Oracle Cloud account, launch Always Free VM (Ubuntu 24.04).
+3. Note the public IP, run `duckdns-update.sh <token> ultragram-api`.
+4. Copy project to `/opt/ultragram` on the VPS.
+5. Edit `/opt/ultragram/.env` with real secrets.
+6. Run `sudo bash deployment/setup-vps.sh`.
+7. Verify: `curl https://ultragram-api.duckdns.org/api/health`.
+8. Set GitHub variable `ULTRAGRAM_BASE_URL=https://ultragram-api.duckdns.org/`.
+9. Trigger Android build in GitHub Actions.
+
+### What I (AI) can do vs. what you must do
+- I can prepare scripts, configs, documentation, and set GitHub variables. ✅ Done.
+- I cannot create cloud accounts, VPS instances, DuckDNS subdomains, or run commands on remote servers. ❌ Requires your action.
+- GitHub variable `ULTRAGRAM_BASE_URL` has been set to `https://ultragram-api.duckdns.org/`.
+
 ## Monitoring
 Use /api/health and process monitoring.
