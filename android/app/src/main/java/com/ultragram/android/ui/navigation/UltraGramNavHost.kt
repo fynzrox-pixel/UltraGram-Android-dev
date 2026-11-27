@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ultragram.android.data.AppSettings
 import com.ultragram.android.ui.screens.auth.AuthScreen
-import com.ultragram.android.ui.screens.chats.ChatListScreen
+
 import com.ultragram.android.ui.screens.chats.ChatScreen
 import com.ultragram.android.ui.screens.gifts.GiftsScreen
 import com.ultragram.android.ui.screens.profile.ProfileScreen
@@ -19,7 +19,7 @@ fun UltraGramNavHost() {
     val startDestination = if (AppSettings.isLoggedIn()) "chats" else "auth"
     NavHost(navController = navController, startDestination = startDestination) {
         composable("auth") { AuthScreen(navController) }
-        composable("chats") { ChatListScreen(navController) }
+        composable("chats") { MainScreen(navController) }
         composable("chat/{chatId}") { backStack ->
             ChatScreen(navController, backStack.arguments?.getString("chatId"))
         }
