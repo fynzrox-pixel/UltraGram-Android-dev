@@ -31,7 +31,10 @@ import com.ultragram.android.data.model.Chat
 import com.ultragram.android.data.model.UserSearchResult
 import com.ultragram.android.data.network.NetworkModule
 import com.ultragram.android.data.network.friendlyMessage
-import com.ultragram.android.ui.theme.*
+import com.ultragram.android.ui.theme.UgDanger
+import com.ultragram.android.ui.theme.UgMuted
+import com.ultragram.android.ui.theme.UgSuccess
+import com.ultragram.android.ui.theme.UltraGramTheme
 import kotlinx.coroutines.launch
 
 private val BgDeep = Color(0xFF05050A)

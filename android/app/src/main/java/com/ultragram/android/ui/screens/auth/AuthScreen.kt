@@ -35,6 +35,10 @@ import androidx.compose.ui.unit.sp
 import com.ultragram.android.data.AppSettings
 import com.ultragram.android.data.network.NetworkModule
 import com.ultragram.android.data.network.friendlyMessage
+import com.ultragram.android.ui.theme.UgDanger
+import com.ultragram.android.ui.theme.UgMuted
+import com.ultragram.android.ui.theme.UgSuccess
+import com.ultragram.android.ui.theme.UltraGramTheme
 import com.ultragram.android.ui.theme.*
 import kotlinx.coroutines.launch
 
