@@ -71,14 +71,7 @@ fun ChatListScreen(navController: androidx.navigation.NavController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text("UltraGram", fontWeight = FontWeight.Bold)
-                        Text(
-                            AppSettings.serverUrl().ifBlank { "Сервер не настроен" },
-                            style = MaterialTheme.typography.labelMedium,
-                            color = UgMuted
-                        )
-                    }
+                    Text("UltraGram", fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     IconButton(onClick = { loadChats() }) {
@@ -115,10 +108,6 @@ fun ChatListScreen(navController: androidx.navigation.NavController) {
                     Text(error ?: "", color = UgDanger)
                     Spacer(Modifier.height(12.dp))
                     Button(onClick = { loadChats() }) { Text("Повторить") }
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedButton(onClick = { navController.navigate("settings") }) {
-                        Text("Настройки сервера")
-                    }
                 }
                 chats.isEmpty() -> Column(
                     modifier = Modifier.align(Alignment.Center).padding(24.dp),
