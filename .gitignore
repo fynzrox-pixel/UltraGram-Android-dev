@@ -7,7 +7,7 @@ android/keystore.properties
 android/*.jks
 android/*.keystore
 *.apk
-!UltraGram-1.0.0.F6.apk
+!UltraGram-1.0.0.F7.apk
 
 # Node
 node_modules/

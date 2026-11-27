@@ -74,7 +74,7 @@ async function waitForHealth(server) {
     const health = await waitForHealth(server);
     record(
       'Backend health',
-      health.ok === true && health.version === '1.0.0.F6' ? 'PASS' : 'FAIL',
+      health.ok === true && health.version === '1.0.0.F7' ? 'PASS' : 'FAIL',
       JSON.stringify(health)
     );
 
