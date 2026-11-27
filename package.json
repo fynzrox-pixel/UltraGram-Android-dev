@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "UltraGram — independent communication platform and digital ecosystem",
   "main": "desktop/main.js",
-  "author": "UltraGram Team",
+  "author": "NoInfoTeam",
   "license": "MIT",
   "scripts": {
     "start": "node backend/server.js",
